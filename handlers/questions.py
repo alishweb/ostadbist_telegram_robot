@@ -1,4 +1,3 @@
-# too_tele_bot/handlers/questions.py
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -16,7 +15,6 @@ from config import CONSULTANT_ID, MESSAGE_LIMIT, LIMIT_REACHED_MESSAGE
 router = Router()
 
 async def pre_question_check(db: aiosqlite.Connection, user_id: int):
-    # (این تابع کمکی بدون تغییر است)
     user_data = await get_or_create_user(db, user_id)
     if not user_data[0]: return "not_registered", None
     current_month = datetime.datetime.now().month
@@ -27,7 +25,6 @@ async def pre_question_check(db: aiosqlite.Connection, user_id: int):
 
 @router.message(Command("ask", "soal"))
 async def command_ask_handler(message: Message, state: FSMContext, db: aiosqlite.Connection):
-    # (این هندلر بدون تغییر است)
     status, _ = await pre_question_check(db, message.from_user.id)
     if status == "not_registered":
         await message.answer("شما هنوز ثبت‌نام نکرده‌اید. لطفاً ابتدا از دستور /start استفاده کنید.")
@@ -39,7 +36,6 @@ async def command_ask_handler(message: Message, state: FSMContext, db: aiosqlite
 
 @router.callback_query(F.data == "ask_new_question")
 async def ask_new_question_callback(callback: CallbackQuery, state: FSMContext, db: aiosqlite.Connection):
-    # (این هندلر بدون تغییر است)
     await callback.answer()
     status, _ = await pre_question_check(db, callback.from_user.id)
     if status == "limit_reached":
@@ -90,16 +86,14 @@ async def process_question(message: Message, state: FSMContext, db: aiosqlite.Co
         logging.error(f"Error in process_question: {e}")
         await message.answer("❌ متاسفانه در ارسال پیام به مشاور خطایی رخ داد.")
     finally:
-        # پاک کردن استیت باید در انتها انجام شود
         await state.clear()
 
 
 @router.message(F.from_user.id == CONSULTANT_ID, F.reply_to_message)
 async def handle_consultant_reply(message: Message):
-    # (این هندلر بدون تغییر است)
     match = re.search(r"آیدی کاربر: (\d+)", message.reply_to_message.text)
     if not match:
-        await message.reply("⚠️ خطا: نتوانستم آیدی کاربر را پیدا کنم.")
+        await message.reply("⚠️ خطا: نتوانستم آیدی کاربر را پیدا کنم. \n لطفا روی پیام کاربر ریپلای بزنید.")
         return
     user_id = int(match.group(1))
     try:

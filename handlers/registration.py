@@ -8,12 +8,10 @@ import aiosqlite
 import datetime
 import re
 
-# چون از این موارد در فایل questions.py هم استفاده می‌شود، اینجا تعریف می‌کنیم
 from db import get_or_create_user, update_user_details
 from middlewares import check_subscription, get_join_channels_keyboard
 from config import MESSAGE_LIMIT, LIMIT_REACHED_MESSAGE
 
-# تعریف State ها در یک مکان مرکزی
 class Consultation(StatesGroup):
     waiting_for_full_name = State()
     waiting_for_phone_number = State()
@@ -33,7 +31,7 @@ async def command_start_handler(message: Message, state: FSMContext, db: aiosqli
         return
 
     user_data = await get_or_create_user(db, message.from_user.id)
-    if user_data[0]:  # اگر کاربر قبلاً ثبت‌نام کرده
+    if user_data[0]:  # If the user logged in in the past
         current_month = datetime.datetime.now().month
         is_new_month = user_data[4] != current_month
         effective_count = 0 if is_new_month else user_data[3]
@@ -43,8 +41,8 @@ async def command_start_handler(message: Message, state: FSMContext, db: aiosqli
             return
         
         await message.answer(f"سلام {escape(user_data[0])} عزیز، خوش برگشتید! 👋", reply_markup=get_ask_new_question_keyboard())
-    else: # اگر کاربر جدید است
-        await message.answer("سلام! به ربات مشاوره خوش آمدید. 👋\n\nلطفاً نام و نام خانوادگی خود را ارسال کنید:")
+    else: # If the user is new
+        await message.answer("سلام! به ربات مشاوره کنکور و انتخاب رشته استادبیست خوش آمدید. 👋\n\nلطفاً نام و نام خانوادگی خود را ارسال کنید:")
         await state.set_state(Consultation.waiting_for_full_name)
 
 @router.callback_query(F.data == "check_join")
@@ -64,7 +62,6 @@ async def check_join_callback(callback: CallbackQuery, state: FSMContext, db: ai
 
 @router.message(Consultation.waiting_for_full_name)
 async def process_full_name(message: Message, state: FSMContext):
-    # Regex برای بررسی حروف فارسی/انگلیسی و فاصله، با طول بین ۳ تا ۵۰ کاراکتر
     name_pattern = r"^[\u0600-\u06FF\sA-Za-z]{3,50}$"
     
     if re.match(name_pattern, message.text) and ' ' in message.text:
