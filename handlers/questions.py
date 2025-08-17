@@ -68,7 +68,7 @@ async def process_question(message: Message, state: FSMContext, db: aiosqlite.Co
         )
         
         await message.bot.send_message(CONSULTANT_ID, final_message)
-        await message.answer("✅ سوال شما با موفقیت برای مشاور ارسال شد.")
+        await message.answer(" ✅ سوال شما با موفقیت برای مشاور ارسال شد. \n مشاوران ما تا 24 ساعت آینده پاسخ شما را ارسال خواهند کرد.")
         
         if is_new_month:
             await reset_monthly_limit(db, user_id, current_month)
