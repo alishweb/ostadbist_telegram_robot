@@ -1,4 +1,3 @@
-# too_tele_bot/handlers/questions.py
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -144,7 +143,6 @@ async def show_stats(message: Message, db: aiosqlite.Connection):
     else:
         for row in stats:
             cid, name, username, assigned, answered = row
-            # استفاده از escape برای نام، تضمین می‌کند که تگ‌های HTML به درستی نمایش داده شوند
             display_name = f"@{username}" if username else escape(name or "نام ثبت نشده")
             report += (
                 f"👤 <b>{display_name}</b> (ID: <code>{cid}</code>):\n"
@@ -152,5 +150,4 @@ async def show_stats(message: Message, db: aiosqlite.Connection):
                 f"  📤 پاسخ‌های ارسال شده: <b>{answered}</b>\n\n"
             )
     
-    # parse_mode به صورت پیش‌فرض روی HTML تنظیم شده، اما برای اطمینان ذکر می‌کنیم
     await message.answer(report, parse_mode="HTML")

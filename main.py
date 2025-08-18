@@ -1,4 +1,3 @@
-# too_tele_bot/main.py
 import asyncio
 import logging
 import aiosqlite
@@ -17,9 +16,7 @@ async def main():
     bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
     
     async with aiosqlite.connect(DB_FILE) as db:
-        # ایجاد تمام جداول مورد نیاز
         await create_all_tables(db)
-        # مطمئن می‌شویم که همه مشاوران در جدول آمار هستند
         await ensure_consultants_in_db(db)
 
         dp = Dispatcher()
