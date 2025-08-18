@@ -10,7 +10,7 @@ import re
 
 from db import get_or_create_user, update_user_details
 from middlewares import check_subscription, get_join_channels_keyboard
-from config import MESSAGE_LIMIT, LIMIT_REACHED_MESSAGE
+from config import CONSULTANT_IDS, MESSAGE_LIMIT, LIMIT_REACHED_MESSAGE, OWNER_ID
 
 class Consultation(StatesGroup):
     waiting_for_full_name = State()
@@ -26,6 +26,14 @@ def get_ask_new_question_keyboard():
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext, db: aiosqlite.Connection):
+    user_id = message.from_user.id
+    if user_id in CONSULTANT_IDS:
+        await message.answer("سلام مشاور گرامی! 👋\n\nشما به عنوان مشاور در سیستم شناسایی شدید. برای پاسخ به سوالات کاربران، کافیست روی پیام آن‌ها ریپلای بزنید.")
+        return
+    elif user_id == OWNER_ID:
+        await message.answer(r"سلام، شما با عنوان مدیر توسط ربات شناسایی شدید و می‌توانید با دستور /stats گزارش مشاوران را دریافت کنید.")
+        return
+    
     if not await check_subscription(message.bot, message.from_user.id):
         await message.answer("⚠️ برای استفاده از ربات، ابتدا باید در کانال‌های زیر عضو شوید:", reply_markup=get_join_channels_keyboard())
         return

@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_TOKEN = os.getenv("BOT_TOKEN")
-CONSULTANT_ID_STR = os.getenv("CONSULTANT_ID")
-CONSULTANT_ID = int(CONSULTANT_ID_STR)
+CONSULTANT_IDS_STR = os.getenv("CONSULTANT_IDS", "")
+if not CONSULTANT_IDS_STR:
+    raise ValueError("حداقل یک آیدی مشاور در فایل .env در متغیر CONSULTANT_IDS نیاز است.")
+CONSULTANT_IDS = [int(cid.strip()) for cid in CONSULTANT_IDS_STR.split(',')]
+OWNER_ID = int(os.getenv("OWNER_ID"))
 
 CHANNELS = ['@aiimpact_ir', '@ai_agent_farsi']
 MESSAGE_LIMIT = 2
