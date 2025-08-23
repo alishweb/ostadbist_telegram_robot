@@ -31,4 +31,16 @@ sudo systemctl status bot1         # وضعیت ربات رو ببین
 journalctl -u bot1 -f
 ```
 
+## 🔑 نکته:
+
+اگه فقط کد پایتون رو تغییر بدی → فقط restart کافیه.
+
+اگه فایل سرویس (.service) رو تغییر بدی → باید daemon-reload هم بزنی:
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart ostad_bot1
+```
+
+
 
